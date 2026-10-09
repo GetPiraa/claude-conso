@@ -37,6 +37,9 @@ Le panneau de détail (les chiffres ci-dessous sont des exemples) :
 
 Un installeur par système, le même pour installer et pour mettre à jour. Tous récupèrent la dernière version de ce dépôt ; tes chiffres et ton historique sont conservés. Les installeurs parlent français ou anglais, selon la langue de ton système.
 
+> [!NOTE]
+> **Un message de sécurité est normal avec les installeurs téléchargés.** Le `.exe` sous Windows (navigateur, puis Windows SmartScreen) et le `.zip` sous macOS (Gatekeeper) peuvent afficher un message du type « téléchargement suspect » ou « développeur non identifié ». Il apparaît pour tout petit programme non signé, la signature étant payante ; il ne veut pas dire que quelque chose a été détecté. Pas d'inquiétude : tout le code est open source, dans ce dépôt, et tu peux le lire avant de lancer quoi que ce soit. Pour éviter le message, utilise l'installation en une ligne.
+
 ### Windows
 
 **En une ligne (conseillé)** : aucun programme à télécharger, donc aucun avertissement de Windows.

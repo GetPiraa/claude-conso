@@ -37,6 +37,9 @@ The detail panel (the figures below are examples):
 
 One installer per system, the same one to install and to update. They all fetch the latest version from this repository; your figures and your history are kept. The installers speak English or French, depending on your system language.
 
+> [!NOTE]
+> **A security warning is normal with the downloaded installers.** The `.exe` on Windows (browser, then Windows SmartScreen) and the `.zip` on macOS (Gatekeeper) can show a message such as "suspicious download" or "unidentified developer". It appears for any small program that is not signed, because code signing is a paid service; it does not mean something was detected. No need to worry: all the code is open source, in this repository, and you can read it before running anything. To avoid the warning altogether, use the one-line install.
+
 ### Windows
 
 **In one line (recommended)**: no program to download, so no Windows warning.
