@@ -27,7 +27,7 @@ fi
 dis() { case "$LANGUE" in fr*) printf '%s\n' "$1" ;; *) printf '%s\n' "$2" ;; esac; }
 
 echo
-dis "=== Mod Conso pour Claude ===" "=== Conso mod for Claude ==="
+dis "=== Mod Conso pour Claude ===" "=== Conso: live token usage for Claude ==="
 
 if ! command -v node >/dev/null 2>&1; then
   dis "Node.js est introuvable. Le mod en a besoin pour compter les tokens, et cet installeur aussi." "Node.js was not found. The mod needs it to count tokens, and so does this installer."

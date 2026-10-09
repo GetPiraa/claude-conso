@@ -26,7 +26,7 @@ static class Installer
         return French ? fr : en;
     }
 
-    static readonly string Title = Say("Mod Conso pour Claude", "Conso mod for Claude");
+    static readonly string Title = Say("Mod Conso pour Claude", "Conso: token usage for Claude");
     const string Key = "CLAUDE_CODE_PLUGIN_DIRS";
     // L'archive de la branche principale : chaque version publiée y est disponible aussitôt.
     const string Latest = "https://github.com/GetPiraa/claude-conso/archive/refs/heads/main.zip";

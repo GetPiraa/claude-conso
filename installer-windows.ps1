@@ -21,7 +21,7 @@
     function Say($fr, $en) { if ($isFrench) { $fr } else { $en } }
 
     Write-Host ''
-    Write-Host (Say '=== Mod Conso pour Claude ===' '=== Conso mod for Claude ===')
+    Write-Host (Say '=== Mod Conso pour Claude ===' '=== Conso: live token usage for Claude ===')
     try {
         New-Item -ItemType Directory -Path $work | Out-Null
         $zip = Join-Path $work 'conso.zip'

@@ -1,8 +1,8 @@
-# Conso for Claude
+# Conso: live token usage for Claude
 
 **English** · [Français](README.fr.md)
 
-A mod for the **Code** tab of the Claude app (Windows, macOS and Linux) that shows your token usage live. "Conso" is short for *consommation*, French for usage.
+A mod for the **Code** tab of the Claude app (Windows, macOS and Linux) that shows your token usage live. "Conso" is short for *consommation*, the French word for consumption.
 
 **Free and open source** ([MIT](LICENSE) license): all the code is in this repository, so you can read it before installing anything. The mod only reads files on your computer and sends nothing over the Internet.
 
