@@ -17,7 +17,7 @@ A mod for the **Code** tab of the Claude app (Windows, macOS and Linux) that sho
 
 The band, always visible above the prompt box:
 
-![The usage band: the current turn, the 5-hour session and the week](docs/bande.png)
+![The usage band: the current turn, the 5-hour session and the week](docs/en/band.png)
 
 The detail panel (the figures below are examples):
 
