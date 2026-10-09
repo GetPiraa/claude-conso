@@ -810,10 +810,15 @@ export const register: Register = on => {
     }
 
     const agents = () => {
-      const all = summary.sessions.flatMap(one => (one.agentList ?? []).map(agent => ({ agent, from: one })))
-      const ranked = all.sort((a, b) => b.agent.week - a.agent.week)
-      const count = summary.sessions.reduce((sum, one) => sum + (one.agentCount ?? 0), 0)
-      const spent = summary.sessions.reduce((sum, one) => sum + one.agents, 0)
+      // Ce que chaque agent a consommé sur la période choisie. Un résumé gardé d'une version précédente n'a que la semaine.
+      const useOf = (agent: AgentUse) => agent.by?.[period] ?? (period === 'week' ? { w: agent.week, calls: agent.calls, raw: agent.raw, parts: agent.parts } : undefined)
+      const ranked = summary.sessions
+        .flatMap(one => (one.agentList ?? []).map(agent => ({ agent, from: one, use: useOf(agent) })))
+        .flatMap(one => (one.use && one.use.w > 0 ? [{ ...one, use: one.use }] : []))
+        .sort((a, b) => b.use.w - a.use.w)
+      const sumOf = (pick: (one: SessionUse) => number) => summary.sessions.reduce((sum, one) => sum + pick(one), 0)
+      const count = Math.max(ranked.length, sumOf(one => one.agentsBy?.[period]?.count ?? (period === 'week' ? (one.agentCount ?? 0) : 0)))
+      const spent = Math.max(ranked.reduce((sum, one) => sum + one.use.w, 0), sumOf(one => one.agentsBy?.[period]?.w ?? (period === 'week' ? one.agents : 0)))
       const start = ranked.length > 0 ? ranked.reduce((sum, one) => sum + one.agent.first, 0) / ranked.length : 0
       if (ranked.length === 0) {
         return <Text dimColor>{s.noAgents}</Text>
@@ -821,11 +826,9 @@ export const register: Register = on => {
 
       return (
         <Box flexDirection="column" rowGap={1}>
-          <Text dimColor>
-            {s.agentsHead(count, fmt(spent), s.pct(share(spent, summary.totals.week ?? 0)), fmt(start))}
-          </Text>
-          {ranked.slice(0, view.allAgents ? ranked.length : FIRST_AGENTS).map(({ agent, from }) => {
-            const why = agentWhy(agent)
+          <Text dimColor>{s.agentsHead(count, fmt(spent), s.pct(share(spent, total)), fmt(start), periodLabel(period))}</Text>
+          {ranked.slice(0, view.allAgents ? ranked.length : FIRST_AGENTS).map(({ agent, from, use }) => {
+            const why = agentWhy({ ...agent, calls: use.calls, raw: use.raw, parts: use.parts })
 
             return pic(
               agentCard(
@@ -834,12 +837,12 @@ export const register: Register = on => {
                 [
                   { label: s.shown, value: fmt(agent.peak) },
                   { label: s.start, value: fmt(agent.first) },
-                  { label: s.requests, value: String(agent.calls) },
-                  { label: s.use, value: fmt(agent.week) },
+                  { label: s.requests, value: String(use.calls) },
+                  { label: s.use, value: fmt(use.w) },
                 ],
                 why,
               ),
-              `${agent.desc} (${from.title})${s.colon}${s.agentAlt(fmt(agent.peak), fmt(agent.first), agent.calls, fmt(agent.week))} ${why.join(' ')}`,
+              `${agent.desc} (${from.title})${s.colon}${s.agentAlt(fmt(agent.peak), fmt(agent.first), use.calls, fmt(use.w))} ${why.join(' ')}`,
             )
           })}
           {count > ranked.length && <Text dimColor>{s.agentsKept(KEPT_AGENTS, ranked.length, count)}</Text>}
@@ -911,7 +914,7 @@ export const register: Register = on => {
         {header}
         {failure !== '' && <Text color="error">{`${s.lastFailed}${s.colon}${failure}`}</Text>}
         {tabs}
-        {!chosen && (view.tab === 'discussions' || view.tab === 'modeles') && periods}
+        {!chosen && (view.tab === 'discussions' || view.tab === 'modeles' || view.tab === 'agents') && periods}
         {!chosen && view.tab === 'discussions' && (
           <Text dimColor>
             {`${periodLabel(period)}${s.colon}${fmt(total)} ${s.inTotal}${official !== undefined ? ` · ${s.ofLimit(s.pct(Math.round(official))).replace('≈ ', '')}` : cap ? ` · ${s.ofLimit(s.pct(share(total, cap)))}` : ''}`}

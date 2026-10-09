@@ -10,6 +10,8 @@ export type AgentUse = {
   /** Les mêmes, en tokens pondérés. */
   parts: number[]
   calls: number
+  /** Par période (five, today, week) : ce qu'il y a consommé, ses requêtes, et les mêmes quatre natures de tokens. */
+  by?: Record<string, { w: number; calls: number; raw: number[]; parts: number[] }>
   /** Le contexte de sa première requête : ce qu'il coûte avant tout travail. */
   first: number
   /** Son plus grand contexte : le chiffre que l'app affiche à côté de l'agent. */
@@ -35,6 +37,8 @@ export type SessionUse = {
   /** La part des sous-agents, sur la semaine. */
   agents: number
   agentCount?: number
+  /** Par période : le nombre d'agents qui ont travaillé et ce qu'ils ont coûté. */
+  agentsBy?: Record<string, { count: number; w: number }>
   /** Ses agents les plus coûteux de la semaine. */
   agentList?: AgentUse[]
 }

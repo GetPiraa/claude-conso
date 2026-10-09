@@ -52,7 +52,7 @@ export type Strings = {
   moreAgents: (count: number) => string
   fewerAgents: string
   agentsKept: (perChat: number, cards: number, agents: number) => string
-  agentsHead: (count: number, spent: string, percent: string, start: string) => string
+  agentsHead: (count: number, spent: string, percent: string, start: string, period: string) => string
   shown: string
   start: string
   requests: string

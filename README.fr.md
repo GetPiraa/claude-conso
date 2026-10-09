@@ -7,7 +7,7 @@ Un mod pour l'onglet **Code** de l'application Claude (Windows, macOS et Linux) 
 **Gratuit et open source** (licence [MIT](LICENSE)) : tout le code est dans ce dépôt, tu peux le lire avant d'installer quoi que ce soit. Le mod ne fait que lire des fichiers de ton ordinateur et n'envoie rien sur Internet.
 
 - **Une bande au-dessus de la zone de saisie** : le tour en cours, la session de 5 h et la semaine.
-- **Un panneau de détail** (bouton Détails ou commande `/conso`) : conso par projet et par discussion, par agent, par modèle, et chronologie.
+- **Un panneau de détail** (bouton Détails ou commande `/conso`) : conso par projet et par discussion, par agent, par modèle, et chronologie, sur la session de 5 h, la journée ou la semaine.
 - **Six langues** : français, anglais, espagnol, allemand, portugais, italien. Le mod suit la langue de ton système ; une liste en haut à droite du panneau permet d'en choisir une autre.
 - **`/conso-refresh`** (expérimental) : fait apparaître la bande dans les discussions ouvertes avant l'installation, en arrêtant leur moteur au repos pour que l'app le relance. Elle ne touche à rien tant qu'une de ces discussions travaille. Si une discussion ne se rouvre pas bien ensuite, ferme et relance Claude.
 
@@ -102,8 +102,11 @@ Le mod lit les transcripts de tes discussions dans `%USERPROFILE%\.claude\projec
 
 ## À savoir sur les chiffres
 
+> [!NOTE]
+> **Le calcul des limites en tokens est encore en chantier.** Anthropic publie des pourcentages, pas des nombres de tokens, et remonter de l'un à l'autre est plus compliqué qu'il n'y paraît. C'est pour ça que ces limites continuent de s'ajuster au fil de ta consommation. Les tokens mesurés et les pourcentages sont fiables ; la limite en tokens est la meilleure estimation du mod à ce jour.
+
 - Les tokens sont **pondérés** : une sortie compte plus qu'une entrée, une relecture de cache presque rien. La pondération suit les prix de l'API ; ce n'est pas la formule officielle des limites, qu'Anthropic ne publie pas.
-- Les **limites en tokens** sont estimées (tokens mesurés ÷ pourcentage officiel). Le mod les trouve tout seul après quelques requêtes et les affine les jours suivants. Prends-les comme un ordre de grandeur : elles peuvent bouger d'une session à l'autre, et elles sortent trop basses si tu utilises aussi ton forfait ailleurs (autre ordinateur, onglet Discussion, cloud). Les pourcentages, eux, sont les officiels.
+- Les **limites en tokens** sont estimées (tokens mesurés ÷ pourcentage officiel). Le mod les trouve tout seul après quelques requêtes et les affine les jours suivants. Ce que tu consommes ailleurs avec le même forfait (autre ordinateur, onglet Discussion, cloud) fait monter le pourcentage officiel sans rien ajouter aux tokens mesurés ici, ce qui fait paraître la limite plus petite qu'elle ne l'est : le mod garde donc la plus haute mesure solide des dix derniers jours. Prends le résultat comme un ordre de grandeur. Les pourcentages, eux, sont les officiels.
 - Seul ce qui est consommé **dans l'onglet Code, sur ce PC** est compté. L'onglet Discussion et les discussions cloud ne le sont pas.
 
 ## Où ça fonctionne

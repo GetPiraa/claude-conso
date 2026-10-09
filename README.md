@@ -7,7 +7,7 @@ A mod for the **Code** tab of the Claude app (Windows, macOS and Linux) that sho
 **Free and open source** ([MIT](LICENSE) license): all the code is in this repository, so you can read it before installing anything. The mod only reads files on your computer and sends nothing over the Internet.
 
 - **A band above the prompt box**: the current turn, the 5-hour session and the week.
-- **A detail panel** (Details button or `/conso` command): usage per project and per conversation, per agent, per model, and a timeline.
+- **A detail panel** (Details button or `/conso` command): usage per project and per conversation, per agent, per model, and a timeline, over the 5-hour session, today or the week.
 - **Six languages**: English, French, Spanish, German, Portuguese, Italian. The mod follows your system language; a list at the top right of the panel lets you pick another one.
 - **`/conso-refresh`** (experimental): makes the band appear in conversations that were open before the install, by stopping their idle engine so the app restarts it. It touches nothing while one of those conversations is working. If a conversation does not reopen properly afterwards, close and restart Claude.
 
@@ -102,8 +102,11 @@ The mod reads the transcripts of your conversations in `%USERPROFILE%\.claude\pr
 
 ## About the figures
 
+> [!NOTE]
+> **The calculation of the limits in tokens is still a work in progress.** Anthropic publishes percentages, not token counts, and working back from one to the other is harder than it looks. That is why these limits keep adjusting as you use Claude. The measured tokens and the percentages are reliable; the limit in tokens is the mod's best estimate so far.
+
 - Tokens are **weighted**: an output token counts more than an input token, a cache re-read almost nothing. The weighting follows the API prices; it is not the official formula behind the limits, which Anthropic does not publish.
-- The **limits in tokens** are estimated (tokens measured ÷ official percentage). The mod works them out by itself after a few requests and keeps refining them over the following days. Treat them as an order of magnitude: they can move from one session to the next, and they come out too low if you also use your plan elsewhere (another computer, the Chat tab, the cloud). The percentages, on the other hand, are the official ones.
+- The **limits in tokens** are estimated (tokens measured ÷ official percentage). The mod works them out by itself after a few requests and keeps refining them over the following days. Whatever you use elsewhere on the same plan (another computer, the Chat tab, the cloud) raises the official percentage without adding to the tokens measured here, which makes a limit look smaller than it is: the mod therefore keeps the highest solid measurement of the last ten days. Treat the result as an order of magnitude. The percentages, on the other hand, are the official ones.
 - Only what is used **in the Code tab, on this computer** is counted. The Chat tab and cloud conversations are not.
 
 ## Where it works

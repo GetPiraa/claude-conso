@@ -133,6 +133,10 @@ test('l’onglet Agents montre les 8 plus coûteux, puis toute la liste sur dema
 
   const pane = await $.ui.mount({ plugin: 'conso', surface: 'desktop', component: 'Pane', requestId: 'conso', props: { bodyColumns: 80 } as never })
   await pane.press({ key: 'tab-agents' })
+  // Sur la session de 5 h, aucun de ces agents n'a travaillé.
+  expect(JSON.stringify(await pane.drawn())).toMatch(/Aucun agent n’a travaillé sur cette période/)
+  await pane.press({ key: 'period-week' })
+  expect(JSON.stringify(await pane.drawn())).toMatch(/Semaine : 15 agents/)
   // La carte des limites, puis une fiche par agent.
   expect(await pane.findAll({ type: 'Svg' })).toHaveLength(1 + 8)
   // Le scanner n'a gardé que 11 fiches sur 15 agents : le panneau le dit.

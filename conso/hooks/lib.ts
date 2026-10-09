@@ -147,9 +147,16 @@ export function addSample(samples: Samples, key: string, p: number, t: number, a
   return { ...samples, [key]: [...others, { p, t, at, w: window }].slice(-30) }
 }
 
-/** La limite estimée : tokens mesurés rapportés aux pourcentages officiels. */
+/**
+ * La limite estimée : tokens mesurés rapportés aux pourcentages officiels.
+ * Ce qui est consommé ailleurs que sur ce PC (autre appareil, onglet Discussion, cloud) fait monter le pourcentage
+ * sans rien ajouter aux tokens mesurés : une fenêtre peut donc donner une limite trop basse, jamais trop haute.
+ * La plus haute des mesures solides (20 % et plus, où l'arrondi du pourcentage pèse peu) est la plus proche de la vraie.
+ */
 export function estimate(list: readonly Sample[] | undefined): number | undefined {
   if (!list || list.length === 0) return undefined
+  const solid = list.filter(sample => sample.p >= 20)
+  if (solid.length > 0) return Math.round(Math.max(...solid.map(sample => sample.t / (sample.p / 100))))
   const tokens = list.reduce((sum, s) => sum + s.t, 0)
   const percent = list.reduce((sum, s) => sum + s.p, 0)
   return percent > 0 ? Math.round(tokens / (percent / 100)) : undefined

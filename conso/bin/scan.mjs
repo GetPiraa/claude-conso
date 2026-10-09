@@ -10,6 +10,9 @@ import path from 'node:path'
 const BUCKET_MS = 10 * 60 * 1000
 const CACHE_VERSION = 3
 const KEEP_DAYS = 8
+// Les périodes que l'onglet Agents sait montrer, et le nombre de fiches gardées pour chacune, par discussion.
+const AGENT_KEYS = ['five', 'today', 'week']
+const AGENT_KEPT = 12
 
 // Prix API en $ par million de tokens : [entrée, sortie, lecture de cache].
 // L'écriture de cache vaut 1,25 x l'entrée (5 min) ou 2 x (1 h).
@@ -334,7 +337,7 @@ export function scan({ projectsDir, cachePath, now, windows: asked, resets = {},
   for (const record of Object.values(cache.files)) {
     let session = sessions.get(record.sessionId)
     if (!session) {
-      session = { id: record.sessionId, title: '', cwd: '', last: 0, w: {}, models: {}, raw: [0, 0, 0, 0], parts: [0, 0, 0, 0], calls: 0, agents: 0, agentList: [] }
+      session = { id: record.sessionId, title: '', cwd: '', last: 0, w: {}, models: {}, raw: [0, 0, 0, 0], parts: [0, 0, 0, 0], calls: 0, agents: 0, agentList: [], agentsBy: {} }
       sessions.set(record.sessionId, session)
     }
     if (record.isMain) {
@@ -345,7 +348,7 @@ export function scan({ projectsDir, cachePath, now, windows: asked, resets = {},
     }
     session.last = Math.max(session.last, record.last ?? 0)
     let subagentWeek = 0
-    const agent = { week: 0, five: 0, raw: [0, 0, 0, 0], parts: [0, 0, 0, 0], calls: 0 }
+    const agent = { week: 0, five: 0, raw: [0, 0, 0, 0], parts: [0, 0, 0, 0], calls: 0, by: {} }
     for (const [key, cell] of Object.entries(record.buckets)) {
       const split = key.indexOf('|')
       const at = Number(key.slice(0, split))
@@ -376,6 +379,15 @@ export function scan({ projectsDir, cachePath, now, windows: asked, resets = {},
         if (window.key === 'five' && !record.isMain) {
           agent.five += cell[0]
         }
+        if (!record.isMain && AGENT_KEYS.includes(window.key)) {
+          const by = (agent.by[window.key] ??= { w: 0, calls: 0, raw: [0, 0, 0, 0], parts: [0, 0, 0, 0] })
+          by.w += cell[0]
+          by.calls += cell[5]
+          for (let i = 0; i < 4; i++) {
+            by.raw[i] += cell[i + 1]
+            by.parts[i] += cell[i + 6]
+          }
+        }
       }
       if (at + BUCKET_MS > fiveStart) {
         const slot = Math.min(slots.length - 1, Math.max(0, Math.floor((at - fiveStart) / BUCKET_MS)))
@@ -385,8 +397,18 @@ export function scan({ projectsDir, cachePath, now, windows: asked, resets = {},
       if (day) day.value += cell[0]
     }
     session.agents += subagentWeek
-    if (!record.isMain && agent.week > 0) {
+    if (!record.isMain) {
+      // Par période : combien d'agents de cette discussion ont travaillé, et ce qu'ils ont coûté.
+      for (const [key, by] of Object.entries(agent.by)) {
+        if (by.w <= 0) continue
+        const sum = (session.agentsBy[key] ??= { count: 0, w: 0 })
+        sum.count += 1
+        sum.w += by.w
+      }
+    }
+    if (!record.isMain && Object.values(agent.by).some(by => by.w > 0)) {
       session.agentList.push({
+        by: Object.fromEntries(Object.entries(agent.by).map(([key, by]) => [key, { w: Math.round(by.w), calls: by.calls, raw: by.raw.map(Math.round), parts: by.parts.map(Math.round) }])),
         desc: record.desc || record.firstPrompt || 'Agent',
         type: record.type || 'agent',
         model: record.model || '',
@@ -438,8 +460,12 @@ export function scan({ projectsDir, cachePath, now, windows: asked, resets = {},
         parts: s.parts.map(round),
         calls: s.calls,
         agents: round(s.agents),
-        agentCount: s.agentList.length,
-        agentList: s.agentList.sort((a, b) => b.week - a.week).slice(0, 12),
+        agentCount: s.agentList.filter(a => a.week > 0).length,
+        agentsBy: Object.fromEntries(Object.entries(s.agentsBy).map(([key, sum]) => [key, { count: sum.count, w: round(sum.w) }])),
+        // Les plus coûteux de chaque période : un agent des cinq dernières heures garde sa fiche même s'il pèse peu sur la semaine.
+        agentList: [...new Set(AGENT_KEYS.flatMap(key => [...s.agentList].sort((a, b) => (b.by[key]?.w ?? 0) - (a.by[key]?.w ?? 0)).slice(0, AGENT_KEPT).filter(a => (a.by[key]?.w ?? 0) > 0)))].sort(
+          (a, b) => b.week - a.week,
+        ),
       }))
       .sort((a, b) => (b.w.week ?? 0) - (a.w.week ?? 0)),
     models: [...models.entries()].map(([name, w]) => ({ name, w: roundAll(w) })),

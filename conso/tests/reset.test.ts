@@ -61,10 +61,13 @@ test('chaque fenêtre ne garde que sa dernière mesure, et l’estimation s’ap
   samples = addSample(samples, 'five', 80, 40000000, first + 4 * HOUR, first)
   expect(samples.five).toHaveLength(1)
   expect(estimate(samples.five)).toBe(50000000)
-  // La fenêtre suivante commence bien plus bas : l'estimation ne s'effondre pas, elle tient compte des deux.
+  // La fenêtre suivante donne bien moins (une part a été consommée ailleurs que sur ce PC) : l'estimation garde la plus haute.
   samples = addSample(samples, 'five', 20, 4000000, NOW, NOW - HOUR)
   expect(samples.five).toHaveLength(2)
-  expect(estimate(samples.five)).toBe(44000000)
+  expect(estimate(samples.five)).toBe(50000000)
+  // Sous 20 %, l'arrondi du pourcentage pèse trop pour qu'une seule mesure fasse foi : c'est la moyenne qui sert.
+  expect(estimate([{ p: 5, t: 4000000, at: NOW }, { p: 15, t: 6000000, at: NOW }])).toBe(50000000)
+  expect(estimate([{ p: 2, t: 1500000, at: NOW }, { p: 22, t: 11000000, at: NOW }])).toBe(50000000)
   // Les mesures gardées par une version précédente, sans fenêtre, laissent la place.
   const old = { five: [{ p: 60, t: 12000000, at: NOW - HOUR }, { p: 61, t: 12000000, at: NOW - HOUR / 2 }] }
   expect(addSample(old, 'five', 62, 12400000, NOW, NOW - 3 * HOUR).five).toHaveLength(1)
