@@ -1,0 +1,6 @@
+{
+  "name": "conso",
+  "version": "1.0.0",
+  "description": "Conso de tokens en direct : limites 5 h / hebdo, détail par projet, discussion et modèle",
+  "types": "./types/index.d.ts"
+}
