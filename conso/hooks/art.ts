@@ -116,7 +116,10 @@ export function bandGauge(percent: number, width = 72): string {
 
 export type LimitRow = { label: string; percent?: number; used: number; cap?: number; reset?: string }
 
-/** Les limites du forfait : pourcentage, tokens utilisés sur la limite estimée, reset. */
+/**
+ * Les limites du forfait : pourcentage, tokens utilisés sur la limite estimée, reset.
+ * Le reste est la part non utilisée de la limite estimée, d'après le pourcentage officiel : il ne le contredit donc jamais.
+ */
 export function limitsCard(rows: readonly LimitRow[]): string {
   const tall = 58
   let body = ''
@@ -135,7 +138,7 @@ export function limitsCard(rows: readonly LimitRow[]): string {
     const under =
       row.percent === undefined
         ? t().notSent
-        : `${row.cap ? `${t().left} ≈ ${fmt(Math.max(0, row.cap - row.used))}` : t().estimating}${row.reset ? ` · ${t().reset} ${row.reset}` : ''}`
+        : `${row.cap ? `${t().left} ≈ ${fmt((row.cap * (100 - Math.min(100, row.percent))) / 100)}` : t().estimating}${row.reset ? ` · ${t().reset} ${row.reset}` : ''}`
     body += text(W - 20, y + 38, under, { size: 10.5, fill: MUTE, anchor: 'end', delay })
     body += hbar(20, y + 47, W - 40, 5, row.percent ?? 0, (row.percent ?? 0) >= 85 ? HOT : 'url(#o)', delay + 80)
   })

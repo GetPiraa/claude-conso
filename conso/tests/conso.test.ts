@@ -88,6 +88,9 @@ for (const surface of ['desktop', 'terminal'] as const) {
     const pane = await $.ui.mount({ plugin: 'conso', surface, component: 'Pane', requestId: 'conso', props: { bodyColumns: 80 } as never })
     expect(await seen(pane)).toMatch(/Hebdo · Fable : 62 %, 49 M sur ≈ 79 M tokens/)
     expect(await seen(pane)).toMatch(/Projet-A · 12 M · 75 %/)
+    // Les parts « de la limite » suivent le pourcentage officiel (32 %), pas la limite estimée.
+    expect(await seen(pane)).toMatch(/Session 5 h : 16 M tokens au total · 32 % de la limite/)
+    expect(await seen(pane)).toMatch(/Maquette du quartier · 12 M · 75 % · ≈ 24 % de la limite/)
     await pane.press({ key: 'period-week' })
     expect(await seen(pane)).toMatch(/Projet-A · 90 M · 82 %/)
     await pane.press({ key: 's-abc' })

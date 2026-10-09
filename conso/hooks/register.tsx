@@ -727,6 +727,10 @@ export const register: Register = on => {
     const period = view.period
     const total = summary.totals[period] ?? 0
     const cap = period === 'today' ? undefined : estimates[period]
+    // Le pourcentage officiel de la période, quand l'app le donne : les parts « de la limite » en découlent,
+    // pour rester d'accord avec lui même quand la limite estimée en tokens s'en écarte.
+    const official = period === 'today' ? undefined : limits.find(limit => limit.key === period)?.percentUsed
+    const ofCap = (value: number) => (official !== undefined && total > 0 ? Math.round((value / total) * official) : cap ? share(value, cap) : undefined)
 
     const detail = (one: SessionUse) => {
       const weighed = one.parts.reduce((sum, part) => sum + part, 0)
@@ -785,7 +789,8 @@ export const register: Register = on => {
                 .sort((a, b) => (b.w[period] ?? 0) - (a.w[period] ?? 0))
                 .map(one => {
                   const value = one.w[period] ?? 0
-                  const note = cap ? `${s.pct(share(value, total))} · ${s.ofLimit(s.pct(share(value, cap)))}` : s.ofPeriod(s.pct(share(value, total)))
+                  const part = ofCap(value)
+                  const note = part === undefined ? s.ofPeriod(s.pct(share(value, total))) : `${s.pct(share(value, total))} · ${s.ofLimit(s.pct(part))}`
                   rank += 1
 
                   return (
@@ -909,7 +914,7 @@ export const register: Register = on => {
         {!chosen && (view.tab === 'discussions' || view.tab === 'modeles') && periods}
         {!chosen && view.tab === 'discussions' && (
           <Text dimColor>
-            {`${periodLabel(period)}${s.colon}${fmt(total)} ${s.inTotal}${cap ? ` · ${s.ofLimit(s.pct(share(total, cap)))}` : ''}`}
+            {`${periodLabel(period)}${s.colon}${fmt(total)} ${s.inTotal}${official !== undefined ? ` · ${s.ofLimit(s.pct(Math.round(official))).replace('≈ ', '')}` : cap ? ` · ${s.ofLimit(s.pct(share(total, cap)))}` : ''}`}
           </Text>
         )}
         {body}

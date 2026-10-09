@@ -103,7 +103,7 @@ The mod reads the transcripts of your conversations in `%USERPROFILE%\.claude\pr
 ## About the figures
 
 - Tokens are **weighted**: an output token counts more than an input token, a cache re-read almost nothing. The weighting follows the API prices; it is not the official formula behind the limits, which Anthropic does not publish.
-- The **limits in tokens** are estimated (tokens measured ÷ official percentage). The mod works them out by itself after a few requests and keeps refining them over the following days.
+- The **limits in tokens** are estimated (tokens measured ÷ official percentage). The mod works them out by itself after a few requests and keeps refining them over the following days. Treat them as an order of magnitude: they can move from one session to the next, and they come out too low if you also use your plan elsewhere (another computer, the Chat tab, the cloud). The percentages, on the other hand, are the official ones.
 - Only what is used **in the Code tab, on this computer** is counted. The Chat tab and cloud conversations are not.
 
 ## Where it works
@@ -111,6 +111,7 @@ The mod reads the transcripts of your conversations in `%USERPROFILE%\.claude\pr
 | Kind of conversation (Code tab) | Band and panel |
 | --- | --- |
 | **Local**, on Windows or macOS | Yes |
+| **Local**, on Linux | Should work the same way, but not tested yet |
 | **Cloud** and **project threads** (beta) | Not with the installer: see "In a project" below |
 | **Remote Control** | Only if the mod is installed on the machine hosting the conversation |
 | **WSL**, **SSH** | Not supported for now: the engine runs on Linux or on another machine |

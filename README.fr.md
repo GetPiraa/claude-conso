@@ -103,7 +103,7 @@ Le mod lit les transcripts de tes discussions dans `%USERPROFILE%\.claude\projec
 ## À savoir sur les chiffres
 
 - Les tokens sont **pondérés** : une sortie compte plus qu'une entrée, une relecture de cache presque rien. La pondération suit les prix de l'API ; ce n'est pas la formule officielle des limites, qu'Anthropic ne publie pas.
-- Les **limites en tokens** sont estimées (tokens mesurés ÷ pourcentage officiel) et s'affinent en quelques jours.
+- Les **limites en tokens** sont estimées (tokens mesurés ÷ pourcentage officiel). Le mod les trouve tout seul après quelques requêtes et les affine les jours suivants. Prends-les comme un ordre de grandeur : elles peuvent bouger d'une session à l'autre, et elles sortent trop basses si tu utilises aussi ton forfait ailleurs (autre ordinateur, onglet Discussion, cloud). Les pourcentages, eux, sont les officiels.
 - Seul ce qui est consommé **dans l'onglet Code, sur ce PC** est compté. L'onglet Discussion et les discussions cloud ne le sont pas.
 
 ## Où ça fonctionne
@@ -111,6 +111,7 @@ Le mod lit les transcripts de tes discussions dans `%USERPROFILE%\.claude\projec
 | Type de discussion (onglet Code) | Bande et panneau |
 | --- | --- |
 | **Local**, sous Windows ou macOS | Oui |
+| **Local**, sous Linux | Devrait fonctionner pareil, mais pas encore testé |
 | **Cloud** et **fils d'un projet** (bêta) | Pas avec l'installeur : voir « Dans un projet » ci-dessous |
 | **Contrôle à distance** | Seulement si le mod est installé sur la machine qui héberge la discussion |
 | **WSL**, **SSH** | Non pris en charge pour l'instant : le moteur tourne sous Linux ou sur une autre machine |
