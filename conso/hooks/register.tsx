@@ -389,7 +389,7 @@ export const register: Register = on => {
       description: t().cmdOpen,
     })
     await $.command.register({
-      name: 'conso-actualiser',
+      name: 'conso-refresh',
       description: t().cmdRefresh,
     })
     try {
@@ -505,7 +505,7 @@ export const register: Register = on => {
     return { text: t().paneOpened }
   })
 
-  on('command.run', { command: 'conso-actualiser' }, async $ => {
+  on('command.run', { command: 'conso-refresh' }, async $ => {
     await speak($)
     const isWindows = (await $.env.get('USERPROFILE')) !== undefined
     const { busy, idle } = await findStale($)

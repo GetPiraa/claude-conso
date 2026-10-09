@@ -1,6 +1,6 @@
 {
   "name": "conso",
-  "version": "1.0.0",
-  "description": "Conso de tokens en direct : limites 5 h / hebdo, détail par projet, discussion et modèle",
+  "version": "1.0.1",
+  "description": "Live token usage: 5 h and weekly limits, per project, conversation, agent and model",
   "types": "./types/index.d.ts"
 }

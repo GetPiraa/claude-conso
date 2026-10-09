@@ -33,7 +33,7 @@ export const data: Data = {
     "Nothing was done: one conversation is still working on an old engine.",
     "Nothing was done: {0} conversations are still working on an old engine."
   ],
-  "refreshWait": "Wait for it to finish (or stop it), then run /conso-actualiser again.",
+  "refreshWait": "Wait for it to finish (or stop it), then run /conso-refresh again.",
   "refreshNone": "Everything is up to date: no open conversation is running on an engine from before the mod.",
   "refreshDone": [
     "1 conversation refreshed:",

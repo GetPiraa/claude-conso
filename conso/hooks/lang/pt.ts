@@ -34,7 +34,7 @@ const data: Data = {
     "Nada foi feito: uma conversa ainda trabalha com um motor antigo.",
     "Nada foi feito: {0} conversas ainda trabalham com um motor antigo."
   ],
-  "refreshWait": "Espere que termine (ou pare-a) e volte a executar /conso-actualiser.",
+  "refreshWait": "Espere que termine (ou pare-a) e volte a executar /conso-refresh.",
   "refreshNone": "Está tudo atualizado: nenhuma conversa aberta funciona com um motor anterior ao mod.",
   "refreshDone": [
     "1 conversa atualizada:",

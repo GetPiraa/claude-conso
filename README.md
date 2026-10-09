@@ -1,64 +1,83 @@
-# Conso pour Claude
+# Conso for Claude
 
-Un mod pour l'onglet **Code** de l'application Claude (Windows, macOS et Linux) qui affiche ta consommation de tokens en direct.
+**English** · [Français](README.fr.md)
 
-**Gratuit et open source** (licence [MIT](LICENSE)) : tout le code est dans ce dépôt, tu peux le lire avant d'installer quoi que ce soit. Le mod ne fait que lire des fichiers de ton ordinateur et n'envoie rien sur Internet.
+A mod for the **Code** tab of the Claude app (Windows, macOS and Linux) that shows your token usage live. "Conso" is short for *consommation*, French for usage.
 
-- **Une bande au-dessus de la zone de saisie** : le tour en cours, la session de 5 h et la semaine.
-- **Un panneau de détail** (bouton Détails ou commande `/conso`) : conso par projet et par discussion, par agent, par modèle, et chronologie.
-- **Six langues** : français, anglais, espagnol, allemand, portugais, italien. Le mod suit la langue de ton système ; une liste en haut à droite du panneau permet d'en choisir une autre.
-- **`/conso-actualiser`** (expérimental) : fait apparaître la bande dans les discussions ouvertes avant l'installation, en arrêtant leur moteur au repos pour que l'app le relance. Elle ne touche à rien tant qu'une de ces discussions travaille. Si une discussion ne se rouvre pas bien ensuite, ferme et relance Claude.
+**Free and open source** ([MIT](LICENSE) license): all the code is in this repository, so you can read it before installing anything. The mod only reads files on your computer and sends nothing over the Internet.
 
-## À quoi ça ressemble
+- **A band above the prompt box**: the current turn, the 5-hour session and the week.
+- **A detail panel** (Details button or `/conso` command): usage per project and per conversation, per agent, per model, and a timeline.
+- **Six languages**: English, French, Spanish, German, Portuguese, Italian. The mod follows your system language; a list at the top right of the panel lets you pick another one.
+- **`/conso-refresh`** (experimental): makes the band appear in conversations that were open before the install, by stopping their idle engine so the app restarts it. It touches nothing while one of those conversations is working. If a conversation does not reopen properly afterwards, close and restart Claude.
 
-La bande, toujours visible au-dessus de la zone de saisie :
+> The mod relies on an early-access feature of the Claude app (plugins with function hooks). It may not load on every setup or every version of the app yet.
 
-![La bande de conso : le tour en cours, la session de 5 h et la semaine](docs/bande.png)
+## What it looks like
 
-Le panneau de détail (les chiffres ci-dessous sont des exemples) :
+The band, always visible above the prompt box:
 
-| Limites du forfait | Au premier lancement |
+![The usage band: the current turn, the 5-hour session and the week](docs/bande.png)
+
+The detail panel (the figures below are examples):
+
+| Plan limits | On first launch |
 | --- | --- |
-| ![Carte des limites](docs/limites.svg) | ![Carte des limites, vide](docs/limites-vide.svg) |
+| ![Limits card](docs/en/limites.svg) | ![Limits card, empty](docs/en/limites-vide.svg) |
 
-| Par discussion | Par modèle |
+| Per conversation | Per model |
 | --- | --- |
-| ![En-tête de projet](docs/projet.svg)<br>![Discussion en cours](docs/discussion-1.svg)<br>![Autre discussion](docs/discussion-2.svg) | ![Répartition par modèle](docs/modeles.svg) |
+| ![Project header](docs/en/projet.svg)<br>![Current conversation](docs/en/discussion-1.svg)<br>![Another conversation](docs/en/discussion-2.svg) | ![Breakdown per model](docs/en/modeles.svg) |
 
-| Chronologie | Agents |
+| Timeline | Agents |
 | --- | --- |
-| ![Conso des 7 derniers jours](docs/chronologie.svg) | ![Fiche d'un agent](docs/agent.svg) |
+| ![Usage over the last 7 days](docs/en/chronologie.svg) | ![An agent's card](docs/en/agent.svg) |
 
-## Installer ou mettre à jour
+## Install or update
 
-Un installeur par système, le même pour installer et pour mettre à jour. Tous récupèrent la dernière version de ce dépôt ; tes chiffres et ton historique sont conservés.
+One installer per system, the same one to install and to update. They all fetch the latest version from this repository; your figures and your history are kept. The installers speak English or French, depending on your system language.
 
 ### Windows
 
-**En une ligne (conseillé)** : aucun programme à télécharger, donc aucun avertissement de Windows.
+**In one line (recommended)**: no program to download, so no Windows warning.
 
-1. Ouvre le menu Démarrer, tape `PowerShell` et ouvre **Windows PowerShell**.
-2. Colle cette ligne, puis appuie sur Entrée :
+1. Open the Start menu, type `PowerShell` and open **Windows PowerShell**.
+2. Paste this line, then press Enter:
 
    ```powershell
    irm https://raw.githubusercontent.com/GetPiraa/claude-conso/main/installer-windows.ps1 | iex
    ```
 
-3. Réponds `o` à la confirmation, puis ferme complètement Claude et relance-le.
+3. Answer `y` to the confirmation, then quit Claude completely and start it again.
 
-La ligne télécharge [ce script](installer-windows.ps1), que tu peux lire avant de le lancer.
+The line downloads [this script](installer-windows.ps1), which you can read before running it.
 
-**Ou avec l'installeur à double-clic** :
+**Or with the double-click installer**:
 
-1. Télécharge [`Conso-pour-Claude.exe`](https://github.com/GetPiraa/claude-conso/raw/main/Conso-pour-Claude.exe) et lance-le.
-2. Ton navigateur puis Windows affichent un avertissement (« téléchargement suspect », « éditeur inconnu ») : c'est le cas de tout petit programme non signé, la signature étant payante. Dans Windows : « Informations complémentaires », puis « Exécuter quand même ».
-3. Ferme complètement Claude et relance-le.
+1. Download [`Conso-for-Claude.exe`](https://github.com/GetPiraa/claude-conso/raw/main/Conso-for-Claude.exe) and run it.
+2. Your browser and then Windows show a warning ("suspicious download", "unknown publisher"): this happens with any small unsigned program, since code signing is a paid service. In Windows: "More info", then "Run anyway".
+3. Quit Claude completely and start it again.
 
 ### macOS
 
-1. Télécharge [`Conso-pour-Claude-mac.zip`](https://github.com/GetPiraa/claude-conso/raw/main/Conso-pour-Claude-mac.zip) et ouvre-le.
-2. Double-clique sur **Installer Conso.command**. Si macOS refuse de l'ouvrir (développeur non identifié) : clic droit sur le fichier > **Ouvrir**, puis de nouveau **Ouvrir**.
-3. Réponds `o` à la confirmation, puis ferme complètement Claude et relance-le.
+**In one line (recommended)**: nothing to download, so no macOS warning.
+
+1. Open the **Terminal** app (Spotlight: `Cmd + Space`, type `Terminal`).
+2. Paste this line, then press Enter:
+
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/GetPiraa/claude-conso/main/installer-mac.sh | bash
+   ```
+
+3. Answer `y` to the confirmation, then quit Claude completely and start it again.
+
+The line downloads [this script](installer-mac.sh), which you can read before running it.
+
+**Or with the double-click installer**:
+
+1. Download [`Conso-for-Claude-mac.zip`](https://github.com/GetPiraa/claude-conso/raw/main/Conso-for-Claude-mac.zip) and open it.
+2. Double-click **Install Conso.command**. If macOS refuses to open it (unidentified developer): right-click the file > **Open**, then **Open** again.
+3. Answer `y` to the confirmation, then quit Claude completely and start it again.
 
 ### Linux
 
@@ -66,56 +85,55 @@ La ligne télécharge [ce script](installer-windows.ps1), que tu peux lire avant
 curl -fsSL https://raw.githubusercontent.com/GetPiraa/claude-conso/main/installer-mac.sh | bash
 ```
 
-La même ligne fonctionne aussi dans le Terminal d'un Mac.
+### What you need
 
-### Ce qu'il te faut
+- a recent Claude app, with the Code tab;
+- [Node.js](https://nodejs.org), which the mod uses to add up the tokens.
 
-- l'application Claude, récente, avec l'onglet Code ;
-- [Node.js](https://nodejs.org), dont le mod se sert pour additionner les tokens.
+## What the installer changes
 
-## Ce que l'installeur modifie
+1. It copies the mod into `%USERPROFILE%\.claude\mods\conso` (on a Mac: `~/.claude/mods/conso`).
+2. It adds that folder to `CLAUDE_CODE_PLUGIN_DIRS` in `%USERPROFILE%\.claude\settings.json`, keeping the previous file as `settings.json.avant-conso.bak`.
 
-1. Il copie le mod dans `%USERPROFILE%\.claude\mods\conso` (sur Mac : `~/.claude/mods/conso`).
-2. Il ajoute ce dossier à `CLAUDE_CODE_PLUGIN_DIRS` dans `%USERPROFILE%\.claude\settings.json`, en gardant l'ancien fichier en `settings.json.avant-conso.bak`.
+The mod reads the transcripts of your conversations in `%USERPROFILE%\.claude\projects` and writes a cache in `%USERPROFILE%\.claude\conso-cache`. It sends nothing over the Internet. Only the installer connects, to GitHub, to fetch the latest version.
 
-Le mod lit les transcripts de tes discussions dans `%USERPROFILE%\.claude\projects` et écrit un cache dans `%USERPROFILE%\.claude\conso-cache`. Il n'envoie rien sur Internet. Seul l'installeur se connecte, à GitHub, pour récupérer la dernière version.
+## About the figures
 
-## À savoir sur les chiffres
+- Tokens are **weighted**: an output token counts more than an input token, a cache re-read almost nothing. The weighting follows the API prices; it is not the official formula behind the limits, which Anthropic does not publish.
+- The **limits in tokens** are estimated (tokens measured ÷ official percentage). The mod works them out by itself after a few requests and keeps refining them over the following days.
+- Only what is used **in the Code tab, on this computer** is counted. The Chat tab and cloud conversations are not.
 
-- Les tokens sont **pondérés** : une sortie compte plus qu'une entrée, une relecture de cache presque rien. La pondération suit les prix de l'API ; ce n'est pas la formule officielle des limites, qu'Anthropic ne publie pas.
-- Les **limites en tokens** sont estimées (tokens mesurés ÷ pourcentage officiel) et s'affinent en quelques jours.
-- Seul ce qui est consommé **dans l'onglet Code, sur ce PC** est compté. L'onglet Discussion et les discussions cloud ne le sont pas.
+## Where it works
 
-## Où ça fonctionne
-
-| Type de discussion (onglet Code) | Bande et panneau |
+| Kind of conversation (Code tab) | Band and panel |
 | --- | --- |
-| **Local**, sous Windows ou macOS | Oui |
-| **Cloud** et **fils d'un projet** (bêta) | Pas avec l'installeur : voir « Dans un projet » ci-dessous |
-| **Contrôle à distance** | Seulement si le mod est installé sur la machine qui héberge la discussion |
-| **WSL**, **SSH** | Non pris en charge pour l'instant : le moteur tourne sous Linux ou sur une autre machine |
+| **Local**, on Windows or macOS | Yes |
+| **Cloud** and **project threads** (beta) | Not with the installer: see "In a project" below |
+| **Remote Control** | Only if the mod is installed on the machine hosting the conversation |
+| **WSL**, **SSH** | Not supported for now: the engine runs on Linux or on another machine |
 
-L'onglet Discussion et Cowork n'acceptent pas les mods.
+The Chat tab and Cowork do not accept mods.
 
-### Dans un projet (bêta)
+### In a project (beta)
 
-Les fils d'un projet tournent par défaut dans le cloud, qui ne lit ni les réglages ni les mods de ton PC. Deux façons d'y avoir le mod :
+Project threads run in the cloud by default, which reads neither the settings nor the mods of your computer. Two ways to get the mod there:
 
-1. **Faire tourner le fil sur ton PC** : dans le fil, menu **+** > **Travailler en local** (« Work locally »). Le fil utilise alors les réglages de ta machine.
-2. **Ajouter le mod au projet** (expérimental) : dans les réglages du projet, section **Plugins**, ajoute le plugin `conso` depuis la marketplace `GetPiraa/claude-conso`. Il se charge dans les nouveaux fils cloud. Il n'y voit que la conso de ce fil : la bande affiche les pourcentages officiels et les tokens du fil, sans limite estimée.
+1. **Run the thread on your computer**: in the thread, **+** menu > **Work locally**. The thread then uses your machine's settings.
+2. **Add the mod to the project** (experimental): in the project settings, **Plugins** section, add the `conso` plugin from the `GetPiraa/claude-conso` marketplace. It loads in new cloud threads. There it only sees that thread's usage: the band shows the official percentages and the thread's tokens, without an estimated limit.
 
-Tous les abonnements sont pris en charge sans réglage : le mod ne contient aucune limite en dur, il les déduit des pourcentages officiels de ton compte.
+Every subscription plan is supported without any setting: the mod contains no hard-coded limit, it derives them from your account's official percentages.
 
-## Désinstaller
+## Uninstall
 
-Supprime le dossier `%USERPROFILE%\.claude\mods\conso`, retire son chemin de `CLAUDE_CODE_PLUGIN_DIRS` dans `settings.json`, et supprime `%USERPROFILE%\.claude\conso-cache` si tu ne veux pas garder l'historique.
+Delete the `%USERPROFILE%\.claude\mods\conso` folder, remove its path from `CLAUDE_CODE_PLUGIN_DIRS` in `settings.json`, and delete `%USERPROFILE%\.claude\conso-cache` if you do not want to keep the history.
 
-## Contribuer
+## Contributing
 
-Le projet est ouvert, sous licence [MIT](LICENSE). Un bug, un correctif, une meilleure formule de calcul : voir [CONTRIBUTING.md](CONTRIBUTING.md).
+The project is open, under the [MIT](LICENSE) license. A bug, a fix, a better formula: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Pour les curieux
+## For the curious
 
-- `conso/` : le mod (`hooks/` pour l'affichage, `bin/scan.mjs` pour le comptage, `tests/`).
-- `installeur/` : la source de l'installeur et le script qui le compile.
-- Depuis Claude Code en terminal : `/plugin install conso --marketplace GetPiraa/claude-conso`.
+- `conso/`: the mod (`hooks/` for the display, `hooks/lang/` for the languages, `bin/scan.mjs` for the counting, `tests/`).
+- `installeur/`: the installer's source and the script that builds it.
+- From Claude Code in a terminal: `/plugin install conso --marketplace GetPiraa/claude-conso`.
+- The code comments are in French.

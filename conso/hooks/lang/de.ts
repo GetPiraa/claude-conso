@@ -34,7 +34,7 @@ const data: Data = {
     "Es wurde nichts getan: Eine Unterhaltung arbeitet noch mit einer alten Engine.",
     "Es wurde nichts getan: {0} Unterhaltungen arbeiten noch mit einer alten Engine."
   ],
-  "refreshWait": "Warte, bis sie fertig ist (oder stoppe sie), und starte /conso-actualiser dann erneut.",
+  "refreshWait": "Warte, bis sie fertig ist (oder stoppe sie), und starte /conso-refresh dann erneut.",
   "refreshNone": "Alles ist aktuell: Keine offene Unterhaltung läuft mit einer Engine von vor dem Mod.",
   "refreshDone": [
     "1 Unterhaltung aktualisiert:",

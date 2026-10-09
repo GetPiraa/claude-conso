@@ -1,10 +1,12 @@
 // Installe ou met à jour le mod "conso" pour Claude (onglet Code) et l'active pour toutes les discussions.
 // Il télécharge la dernière version depuis GitHub (ou utilise celle qu'il embarque s'il est hors ligne),
 // copie un dossier et ajoute une ligne à settings.json. Rien d'autre.
+// Ses messages sont en français sur un système en français, en anglais sinon.
 //
 // Compiler (Windows, .NET Framework 4, déjà présent) : voir installeur/compiler.cmd.
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -16,7 +18,15 @@ using System.Windows.Forms;
 
 static class Installer
 {
-    const string Title = "Mod Conso pour Claude";
+    // La langue des messages : celle du système, ou CONSO_LANG pour l'imposer.
+    static readonly bool French = (Environment.GetEnvironmentVariable("CONSO_LANG") ?? CultureInfo.CurrentUICulture.Name).StartsWith("fr", StringComparison.OrdinalIgnoreCase);
+
+    static string Say(string fr, string en)
+    {
+        return French ? fr : en;
+    }
+
+    static readonly string Title = Say("Mod Conso pour Claude", "Conso mod for Claude");
     const string Key = "CLAUDE_CODE_PLUGIN_DIRS";
     // L'archive de la branche principale : chaque version publiée y est disponible aussitôt.
     const string Latest = "https://github.com/GetPiraa/claude-conso/archive/refs/heads/main.zip";
@@ -146,7 +156,9 @@ static class Installer
             bool fromWeb = online != null && Compare(VersionOf(online), VersionOf(embedded)) >= 0;
             byte[] chosen = fromWeb ? online : embedded;
             string shipped = VersionOf(chosen);
-            string origin = fromWeb ? "téléchargée depuis GitHub" : online == null ? "embarquée dans l'installeur (GitHub injoignable)" : "embarquée dans l'installeur";
+            string origin = fromWeb ? Say("téléchargée depuis GitHub", "downloaded from GitHub")
+                : online == null ? Say("embarquée dans l'installeur (GitHub injoignable)", "bundled in the installer (GitHub unreachable)")
+                : Say("embarquée dans l'installeur", "bundled in the installer");
 
             // Déjà installé ? L'installeur devient une mise à jour : il remplace les fichiers du mod, rien d'autre.
             string manifest = Path.Combine(target, ".claude-plugin", "plugin.json");
@@ -157,22 +169,26 @@ static class Installer
                 string ask;
                 if (!isUpdate)
                 {
-                    ask = "Installer le mod Conso pour Claude ?\n\nVersion " + shipped + ", " + origin + ".\n\n"
-                        + "1. Le mod est copié dans :\n" + target + "\n\n"
-                        + "2. Une ligne est ajoutée à :\n" + settingsPath + "\n(l'ancien fichier est gardé en .avant-conso.bak)";
+                    ask = Say("Installer le mod Conso pour Claude ?", "Install the Conso mod for Claude?") + "\n\nVersion " + shipped + ", " + origin + ".\n\n"
+                        + Say("1. Le mod est copié dans :", "1. The mod is copied to:") + "\n" + target + "\n\n"
+                        + Say("2. Une ligne est ajoutée à :", "2. One line is added to:") + "\n" + settingsPath + "\n"
+                        + Say("(l'ancien fichier est gardé en .avant-conso.bak)", "(the previous file is kept as .avant-conso.bak)");
                 }
                 else
                 {
                     int order = Compare(installed, shipped);
                     if (order == 0)
                     {
-                        MessageBox.Show("Le mod Conso est déjà à jour (version " + shipped + ").", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(Say("Le mod Conso est déjà à jour (version ", "The Conso mod is already up to date (version ") + shipped + ").", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return 0;
                     }
-                    string head = order < 0 ? "Mettre à jour le mod Conso : version " + installed + " → " + shipped + " ?"
-                        : "Attention : la version installée (" + installed + ") est plus récente que la version disponible (" + shipped + "). La remplacer quand même ?";
-                    ask = head + "\n\nNouvelle version " + origin + ".\n\nLes fichiers du mod sont remplacés dans :\n" + target
-                        + "\n\nTes chiffres, ton historique et les limites déjà apprises sont conservés.";
+                    string head = order < 0 ? Say("Mettre à jour le mod Conso : version ", "Update the Conso mod: version ") + installed + " → " + shipped + Say(" ?", "?")
+                        : Say("Attention : la version installée (", "Warning: the installed version (") + installed
+                            + Say(") est plus récente que la version disponible (", ") is newer than the available version (") + shipped
+                            + Say("). La remplacer quand même ?", "). Replace it anyway?");
+                    ask = head + "\n\n" + Say("Nouvelle version ", "New version ") + origin + ".\n\n"
+                        + Say("Les fichiers du mod sont remplacés dans :", "The mod's files are replaced in:") + "\n" + target + "\n\n"
+                        + Say("Tes chiffres, ton historique et les limites déjà apprises sont conservés.", "Your figures, your history and the limits already learned are kept.");
                 }
                 if (MessageBox.Show(ask, Title, MessageBoxButtons.OKCancel, isUpdate ? MessageBoxIcon.Information : MessageBoxIcon.Question) != DialogResult.OK) return 1;
             }
@@ -181,7 +197,7 @@ static class Installer
             if (Directory.Exists(target)) Directory.Delete(target, true);
             Directory.CreateDirectory(target);
             Extract(chosen, target);
-            if (!File.Exists(manifest)) throw new Exception("La copie du mod est incomplète.");
+            if (!File.Exists(manifest)) throw new Exception(Say("La copie du mod est incomplète.", "The mod was not copied completely."));
 
             // 2. Le réglage qui le charge dans chaque discussion.
             JavaScriptSerializer json = new JavaScriptSerializer();
@@ -211,16 +227,21 @@ static class Installer
                 bool hasNode = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(';')
                     .Any(dir => dir.Length > 0 && File.Exists(Path.Combine(dir.Trim('"'), "node.exe")));
                 string done = isUpdate
-                    ? "Mise à jour terminée : version " + shipped + ".\n\nFerme complètement Claude puis relance-le. Dans une discussion neuve, la commande /conso-actualiser fait apparaître la bande dans les discussions déjà ouvertes."
-                    : "Installation terminée : version " + shipped + ".\n\nFerme complètement Claude puis relance-le : la bande de conso apparaît au-dessus de la zone de saisie, et /conso ouvre le détail.\n\nPour mettre à jour plus tard, relance simplement cet installeur.";
-                if (!hasNode) done += "\n\nAttention : Node.js est introuvable. Le mod en a besoin pour compter les tokens. Installe-le depuis https://nodejs.org puis relance Claude.";
+                    ? Say("Mise à jour terminée : version ", "Update complete: version ") + shipped + ".\n\n"
+                        + Say("Ferme complètement Claude puis relance-le. Dans une discussion neuve, la commande /conso-refresh fait apparaître la bande dans les discussions déjà ouvertes.",
+                              "Quit Claude completely and start it again. In a new conversation, the /conso-refresh command makes the band appear in conversations that were already open.")
+                    : Say("Installation terminée : version ", "Installation complete: version ") + shipped + ".\n\n"
+                        + Say("Ferme complètement Claude puis relance-le : la bande de conso apparaît au-dessus de la zone de saisie, et /conso ouvre le détail.\n\nPour mettre à jour plus tard, relance simplement cet installeur.",
+                              "Quit Claude completely and start it again: the usage band appears above the prompt box, and /conso opens the details.\n\nTo update later, simply run this installer again.");
+                if (!hasNode) done += "\n\n" + Say("Attention : Node.js est introuvable. Le mod en a besoin pour compter les tokens. Installe-le depuis https://nodejs.org puis relance Claude.",
+                                                    "Warning: Node.js was not found. The mod needs it to count tokens. Install it from https://nodejs.org, then restart Claude.");
                 MessageBox.Show(done, Title, MessageBoxButtons.OK, hasNode ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
             }
             return 0;
         }
         catch (Exception error)
         {
-            if (!silent) MessageBox.Show("L'installation a échoué :\n" + error.Message, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!silent) MessageBox.Show(Say("L'installation a échoué :", "The installation failed:") + "\n" + error.Message, Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 2;
         }
     }

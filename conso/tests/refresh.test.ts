@@ -42,23 +42,23 @@ function world(on: On, engines: typeof ENGINES, killed: string[]) {
   })
 }
 
-test('/conso-actualiser ne touche à rien tant qu’une ancienne discussion travaille', async ($, on) => {
+test('/conso-refresh ne touche à rien tant qu’une ancienne discussion travaille', async ($, on) => {
   const killed: string[] = []
   world(on, ENGINES, killed)
-  const answer = await $.command.run({ command: 'conso-actualiser' } as never)
+  const answer = await $.command.run({ command: 'conso-refresh' } as never)
   expect(JSON.stringify(answer)).toMatch(/Rien n'a été fait/)
   expect(JSON.stringify(answer)).toMatch(/Ancienne qui travaille/)
   expect(killed).toEqual([])
 })
 
-test('/conso-actualiser arrête seulement les anciens moteurs au repos', async ($, on) => {
+test('/conso-refresh arrête seulement les anciens moteurs au repos', async ($, on) => {
   const killed: string[] = []
   world(
     on,
     ENGINES.filter(engine => engine.sessionId !== 'b'),
     killed,
   )
-  const answer = await $.command.run({ command: 'conso-actualiser' } as never)
+  const answer = await $.command.run({ command: 'conso-refresh' } as never)
   expect(killed).toEqual(['2'])
   expect(JSON.stringify(answer)).toMatch(/1 discussion rafraîchie/)
 })
@@ -74,7 +74,7 @@ test('sous macOS, seuls les binaires « claude » comptent comme moteurs, pas l�
   expect([...alivePids(ps, false)]).toEqual([702, 703])
 })
 
-test('/conso-actualiser fonctionne aussi sans Windows : ps pour lister, kill pour arrêter', async ($, on) => {
+test('/conso-refresh fonctionne aussi sans Windows : ps pour lister, kill pour arrêter', async ($, on) => {
   const killed: string[] = []
   const engines = ENGINES.filter(engine => engine.sessionId !== 'b')
   mock.env(on, { HOME: '/Users/moi', CONSO_LANG: 'fr' })
@@ -98,7 +98,7 @@ test('/conso-actualiser fonctionne aussi sans Windows : ps pour lister, kill pou
 
     return { value: { exitCode: 0, stdout, stderr: '', isStdoutTruncated: false, isStderrTruncated: false } } as never
   })
-  const answer = await $.command.run({ command: 'conso-actualiser' } as never)
+  const answer = await $.command.run({ command: 'conso-refresh' } as never)
   expect(calls[0]).toBe('ps -axo pid=,comm=')
   expect(calls).toContain('kill -TERM 2')
   expect(killed).toEqual(['2'])

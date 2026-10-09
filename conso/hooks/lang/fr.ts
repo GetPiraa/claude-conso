@@ -34,7 +34,7 @@ const data: Data = {
     "Rien n'a été fait : une discussion travaille encore sur un ancien moteur.",
     "Rien n'a été fait : {0} discussions travaillent encore sur un ancien moteur."
   ],
-  "refreshWait": "Attends qu’elle ait fini (ou arrête-la), puis relance /conso-actualiser.",
+  "refreshWait": "Attends qu’elle ait fini (ou arrête-la), puis relance /conso-refresh.",
   "refreshNone": "Tout est à jour : aucune discussion ouverte ne tourne sur un moteur d’avant le mod.",
   "refreshDone": [
     "1 discussion rafraîchie :",

@@ -1,8 +1,11 @@
+# Installs or updates the "conso" mod for Claude (Code tab) on Windows, with nothing to download by hand.
 # Installe ou met à jour le mod "conso" pour Claude (onglet Code) sous Windows, sans rien télécharger à la main.
-# Il fait la même chose que Conso-pour-Claude.exe : il récupère la dernière version de ce dépôt,
-# copie le mod dans %USERPROFILE%\.claude\mods\conso et l'ajoute à CLAUDE_CODE_PLUGIN_DIRS dans settings.json.
 #
-# Lancer (et relancer pour mettre à jour), dans PowerShell :
+# It does what the double-click installer does: it fetches the latest version of this repository, copies the mod
+# into %USERPROFILE%\.claude\mods\conso and adds it to CLAUDE_CODE_PLUGIN_DIRS in settings.json.
+# Messages are in French on a French system, in English otherwise.
+#
+# Run it (and run it again to update), in PowerShell:
 #   irm https://raw.githubusercontent.com/GetPiraa/claude-conso/main/installer-windows.ps1 | iex
 & {
     $ErrorActionPreference = 'Stop'
@@ -12,9 +15,13 @@
     $settingsPath = Join-Path $claude 'settings.json'
     $key = 'CLAUDE_CODE_PLUGIN_DIRS'
     $work = Join-Path ([IO.Path]::GetTempPath()) ('conso-' + [Guid]::NewGuid().ToString('N'))
+    # La langue des messages : celle du système, ou CONSO_LANG pour l'imposer.
+    $lang = if ($env:CONSO_LANG) { $env:CONSO_LANG } else { (Get-UICulture).Name }
+    $isFrench = $lang -like 'fr*'
+    function Say($fr, $en) { if ($isFrench) { $fr } else { $en } }
 
     Write-Host ''
-    Write-Host '=== Mod Conso pour Claude ==='
+    Write-Host (Say '=== Mod Conso pour Claude ===' '=== Conso mod for Claude ===')
     try {
         New-Item -ItemType Directory -Path $work | Out-Null
         $zip = Join-Path $work 'conso.zip'
@@ -25,7 +32,7 @@
             try {
                 (New-Object Net.WebClient).DownloadFile($source, $zip)
             } catch {
-                throw 'Téléchargement impossible depuis GitHub. Vérifie ta connexion et réessaie.'
+                throw (Say 'Téléchargement impossible depuis GitHub. Vérifie ta connexion et réessaie.' 'Could not download from GitHub. Check your connection and try again.')
             }
         }
         Expand-Archive -LiteralPath $zip -DestinationPath (Join-Path $work 'archive')
@@ -34,7 +41,7 @@
         $found = Get-ChildItem -Path (Join-Path $work 'archive') -Recurse -Filter 'plugin.json' |
             Where-Object { $_.Directory.Name -eq '.claude-plugin' -and $_.Directory.Parent.Name -eq 'conso' } |
             Select-Object -First 1
-        if (-not $found) { throw "L'archive téléchargée ne contient pas le mod." }
+        if (-not $found) { throw (Say "L'archive téléchargée ne contient pas le mod." 'The downloaded archive does not contain the mod.') }
         $src = $found.Directory.Parent.FullName
         $versionOf = { param($file) try { [string](Get-Content -LiteralPath $file -Raw -Encoding UTF8 | ConvertFrom-Json).version } catch { '' } }
         $new = & $versionOf $found.FullName
@@ -42,21 +49,21 @@
         $installed = if (Test-Path -LiteralPath $manifest) { & $versionOf $manifest } else { $null }
 
         if ($installed -and $installed -eq $new) {
-            Write-Host "Le mod est déjà à jour (version $new)."
+            Write-Host (Say "Le mod est déjà à jour (version $new)." "The mod is already up to date (version $new).")
             return
         }
         if ($installed) {
-            Write-Host "Mise à jour : version $installed -> $new"
-            Write-Host 'Tes chiffres, ton historique et les limites déjà apprises sont conservés.'
+            Write-Host (Say "Mise à jour : version $installed -> $new" "Update: version $installed -> $new")
+            Write-Host (Say 'Tes chiffres, ton historique et les limites déjà apprises sont conservés.' 'Your figures, your history and the limits already learned are kept.')
         } else {
-            Write-Host "Installation de la version $new"
-            Write-Host "1. Le mod est copié dans : $target"
-            Write-Host "2. Une ligne est ajoutée à : $settingsPath (l'ancien fichier est gardé en .avant-conso.bak)"
+            Write-Host (Say "Installation de la version $new" "Installing version $new")
+            Write-Host (Say "1. Le mod est copié dans : $target" "1. The mod is copied to: $target")
+            Write-Host (Say "2. Une ligne est ajoutée à : $settingsPath (l'ancien fichier est gardé en .avant-conso.bak)" "2. One line is added to: $settingsPath (the previous file is kept as .avant-conso.bak)")
         }
         if (-not $env:CONSO_SILENT) {
-            $answer = Read-Host 'Continuer ? [o/N]'
+            $answer = Read-Host (Say 'Continuer ? [o/N]' 'Continue? [y/N]')
             if ($answer -notmatch '^(o|oui|y|yes)$') {
-                Write-Host 'Annulé.'
+                Write-Host (Say 'Annulé.' 'Cancelled.')
                 return
             }
         }
@@ -67,7 +74,7 @@
         Copy-Item -Path (Join-Path $src '*') -Destination $target -Recurse -Force
         $tests = Join-Path $target 'tests'
         if (Test-Path -LiteralPath $tests) { Remove-Item -LiteralPath $tests -Recurse -Force }
-        if (-not (Test-Path -LiteralPath $manifest)) { throw 'La copie du mod est incomplète.' }
+        if (-not (Test-Path -LiteralPath $manifest)) { throw (Say 'La copie du mod est incomplète.' 'The mod was not copied completely.') }
 
         # 2. Le réglage qui le charge dans chaque discussion.
         $settings = New-Object PSObject
@@ -89,14 +96,14 @@
         }
 
         Write-Host ''
-        Write-Host "Terminé : version $new."
-        Write-Host 'Ferme complètement Claude puis relance-le : la bande de conso apparaît au-dessus de la zone de saisie, et /conso ouvre le détail.'
-        Write-Host 'Pour mettre à jour plus tard, relance la même commande.'
+        Write-Host (Say "Terminé : version $new." "Done: version $new.")
+        Write-Host (Say 'Ferme complètement Claude puis relance-le : la bande de conso apparaît au-dessus de la zone de saisie, et /conso ouvre le détail.' 'Quit Claude completely and start it again: the usage band appears above the prompt box, and /conso opens the details.')
+        Write-Host (Say 'Pour mettre à jour plus tard, relance la même commande.' 'To update later, run the same command again.')
         if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
-            Write-Host 'Attention : Node.js est introuvable. Le mod en a besoin pour compter les tokens. Installe-le depuis https://nodejs.org puis relance Claude.' -ForegroundColor Yellow
+            Write-Host (Say 'Attention : Node.js est introuvable. Le mod en a besoin pour compter les tokens. Installe-le depuis https://nodejs.org puis relance Claude.' 'Warning: Node.js was not found. The mod needs it to count tokens. Install it from https://nodejs.org, then restart Claude.') -ForegroundColor Yellow
         }
     } catch {
-        Write-Host "L'installation a échoué : $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host ((Say "L'installation a échoué : " 'The installation failed: ') + $_.Exception.Message) -ForegroundColor Red
     } finally {
         if (Test-Path -LiteralPath $work) { Remove-Item -LiteralPath $work -Recurse -Force -ErrorAction SilentlyContinue }
     }
