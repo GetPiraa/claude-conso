@@ -1,6 +1,6 @@
 {
   "name": "conso",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Live token usage: 5 h and weekly limits, per project, conversation, agent and model",
   "types": "./types/index.d.ts"
 }

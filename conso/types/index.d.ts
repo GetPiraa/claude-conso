@@ -72,9 +72,9 @@ export type Period = 'five' | 'today' | 'week'
 /**
  * `freshAt` : l'instant du dernier changement de vue ; les cartes dessinées juste après jouent leur animation.
  * `openedAt` : l'instant de l'ouverture du panneau ; la carte des limites, commune à tous les onglets, ne s'anime qu'alors.
- * `langOpen` : la liste des langues est dépliée.
+ * `langOpen` : la liste des langues est dépliée (surfaces sans liste déroulante) ; `allAgents` : l'onglet Agents montre toutes ses fiches.
  */
-export type View = { tab: Tab; period: Period; sessionId?: string; freshAt?: number; openedAt?: number; langOpen?: boolean }
+export type View = { tab: Tab; period: Period; sessionId?: string; freshAt?: number; openedAt?: number; langOpen?: boolean; allAgents?: boolean }
 
 declare module 'claude-code' {
   interface PluginState {

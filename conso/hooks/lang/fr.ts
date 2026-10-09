@@ -101,7 +101,10 @@ const data: Data = {
     "{0} discussions"
   ],
   "peak": "pic",
-  "tokens": "tokens"
+  "tokens": "tokens",
+  "moreAgents": "Afficher la suite ({0})",
+  "fewerAgents": "Réduire la liste",
+  "agentsKept": "Seuls les {0} agents les plus coûteux de chaque discussion sont gardés en détail : {1} fiches pour {2} agents."
 }
 
 export default data

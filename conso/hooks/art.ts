@@ -340,7 +340,7 @@ export function agentCard(
   // Une phrase trop longue pour la carte passe à la ligne au lieu d'être coupée : les traductions n'ont pas toutes la même longueur.
   let row = 0
   why.forEach((line, i) => {
-    for (const piece of wrap(line, 80)) {
+    for (const piece of wrap(line, 88)) {
       body += text(20, 126 + row * 16, piece, { size: 10.5, fill: i === 0 ? INK : MUTE })
       row += 1
     }

@@ -101,7 +101,10 @@ const data: Data = {
     "{0} conversazioni"
   ],
   "peak": "picco",
-  "tokens": "token"
+  "tokens": "token",
+  "moreAgents": "Mostra altri ({0})",
+  "fewerAgents": "Mostra meno",
+  "agentsKept": "Solo i {0} agenti più costosi di ogni conversazione sono conservati in dettaglio: {1} schede per {2} agenti."
 }
 
 export default data

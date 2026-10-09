@@ -49,6 +49,9 @@ export type Strings = {
   ofLimit: (percent: string) => string
   ofPeriod: (percent: string) => string
   noAgents: string
+  moreAgents: (count: number) => string
+  fewerAgents: string
+  agentsKept: (perChat: number, cards: number, agents: number) => string
   agentsHead: (count: number, spent: string, percent: string, start: string) => string
   shown: string
   start: string

@@ -101,7 +101,10 @@ const data: Data = {
     "{0} Unterhaltungen"
   ],
   "peak": "Spitze",
-  "tokens": "Tokens"
+  "tokens": "Tokens",
+  "moreAgents": "Mehr anzeigen ({0})",
+  "fewerAgents": "Weniger anzeigen",
+  "agentsKept": "Nur die {0} teuersten Agenten jeder Unterhaltung werden im Detail behalten: {1} Karten für {2} Agenten."
 }
 
 export default data

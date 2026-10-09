@@ -110,3 +110,35 @@ for (const surface of ['desktop', 'terminal'] as const) {
     await pane.unmount()
   })
 }
+
+test('l’onglet Agents montre les 8 plus coûteux, puis toute la liste sur demande', async ($, on) => {
+  mock.clock(on, { now: NOW })
+  mock.store(on)
+  mock.env(on, { USERPROFILE: 'C:/Users/test' })
+  mockLangs(on)
+  const agent = SUMMARY.sessions[0]?.agentList?.[0]
+  const first = SUMMARY.sessions[0]
+  if (!agent || !first) throw new Error('données de test incomplètes')
+  const many: Summary = {
+    ...SUMMARY,
+    sessions: [{ ...first, agentCount: 15, agentList: Array.from({ length: 11 }, (_, i) => ({ ...agent, desc: `Agent ${i + 1}`, week: agent.week - i })) }],
+  }
+  on('session.usage', async () => ({ value: { startedAt: 0, context: {}, rateLimits: [] } }) as never)
+  on('process.run', async () => ({ value: { exitCode: 0, stdout: JSON.stringify(many), stderr: '', isStdoutTruncated: false, isStderrTruncated: false } }) as never)
+  on('turn.complete', async () => ({ text: '' }) as never)
+  await $.turn.complete({ turnId: 't1', answer: '' } as never)
+
+  const pane = await $.ui.mount({ plugin: 'conso', surface: 'desktop', component: 'Pane', requestId: 'conso', props: { bodyColumns: 80 } as never })
+  await pane.press({ key: 'tab-agents' })
+  // La carte des limites, puis une fiche par agent.
+  expect(await pane.findAll({ type: 'Svg' })).toHaveLength(1 + 8)
+  // Le scanner n'a gardé que 11 fiches sur 15 agents : le panneau le dit.
+  expect(JSON.stringify(await pane.drawn())).toMatch(/Seuls les 12 agents les plus coûteux de chaque discussion sont gardés en détail : 11 fiches pour 15 agents/)
+  expect(JSON.stringify(await pane.drawn())).toMatch(/Afficher la suite \(3\)/)
+  await pane.press({ key: 'agents-more' })
+  expect(await pane.findAll({ type: 'Svg' })).toHaveLength(1 + 11)
+  expect(JSON.stringify(await pane.drawn())).toMatch(/Réduire la liste/)
+  await pane.press({ key: 'agents-more' })
+  expect(await pane.findAll({ type: 'Svg' })).toHaveLength(1 + 8)
+  await pane.unmount()
+})

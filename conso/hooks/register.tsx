@@ -25,6 +25,10 @@ import type { Engine, Samples } from './lib'
 
 const PANE = 'conso'
 const FIRST_VIEW: View = { tab: 'discussions', period: 'five' }
+// L'onglet Agents ne dessine d'abord que les plus coûteux : un bouton déplie la suite.
+const FIRST_AGENTS = 8
+// Ce que le scanner garde par discussion (bin/scan.mjs) : au-delà, un agent est compté mais n'a pas de fiche.
+const KEPT_AGENTS = 12
 const IDLE: Live = { total: 0, last: 0, steps: 0, isRunning: false }
 
 const summaryAtom = atom({ plugin: 'conso', key: 'summary' } as const, null)
@@ -815,7 +819,7 @@ export const register: Register = on => {
           <Text dimColor>
             {s.agentsHead(count, fmt(spent), s.pct(share(spent, summary.totals.week ?? 0)), fmt(start))}
           </Text>
-          {ranked.slice(0, 8).map(({ agent, from }) => {
+          {ranked.slice(0, view.allAgents ? ranked.length : FIRST_AGENTS).map(({ agent, from }) => {
             const why = agentWhy(agent)
 
             return pic(
@@ -833,6 +837,16 @@ export const register: Register = on => {
               `${agent.desc} (${from.title})${s.colon}${s.agentAlt(fmt(agent.peak), fmt(agent.first), agent.calls, fmt(agent.week))} ${why.join(' ')}`,
             )
           })}
+          {count > ranked.length && <Text dimColor>{s.agentsKept(KEPT_AGENTS, ranked.length, count)}</Text>}
+          {ranked.length > FIRST_AGENTS && (
+            <Box flexDirection="row">
+              <Button
+                key="agents-more"
+                label={view.allAgents ? s.fewerAgents : s.moreAgents(ranked.length - FIRST_AGENTS)}
+                onPress={() => update($, viewAtom, now => ({ ...now, allAgents: !now.allAgents }))}
+              />
+            </Box>
+          )}
         </Box>
       )
     }

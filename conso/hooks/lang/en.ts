@@ -100,5 +100,8 @@ export const data: Data = {
     "{0} conversations"
   ],
   "peak": "peak",
-  "tokens": "tokens"
+  "tokens": "tokens",
+  "moreAgents": "Show more ({0})",
+  "fewerAgents": "Show fewer",
+  "agentsKept": "Only the {0} most expensive agents of each conversation are kept in detail: {1} cards for {2} agents."
 }
